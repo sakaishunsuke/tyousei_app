@@ -239,3 +239,15 @@ header {
   border-radius: 0 0 2px 2px;
   font-size: 14px;
 }
+
+// ここからオリジナル！
+.calendar {
+  table-layout: fixed;
+  margin: 0 auto 0;
+  color: black;
+  width: 90%;
+}
+
+.calendar-click-color {
+  background-color: red;
+}
