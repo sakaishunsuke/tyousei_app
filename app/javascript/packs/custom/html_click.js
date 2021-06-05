@@ -35,12 +35,12 @@ $(function(){
     var items = Cookies.get( username );
     var dates = items.split(',');
     
+    for(let count = 1; count < 32; count++) {
+      // 1 ~ 31 日　をリセット
+      $('#date-masu-'+count).removeClass( 'calendar-click-color' );
+    }
     // undefinedでなければデータがproduct_nameに入っている。
     if (items != undefined) {
-      for(let count = 1; count < 32; count++) {
-        // 1 ~ 31 日　をリセット
-        $('#date-masu-'+count).removeClass( 'calendar-click-color' );
-      }
       dates.forEach(function(date, index) {
         $('#date-masu-'+date).toggleClass( 'calendar-click-color' );
         // console.log(index + ': ' + date);
