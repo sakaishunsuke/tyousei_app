@@ -115,7 +115,7 @@ header {
 
 /* top ================================ */
 .top-main {
-  padding: 200px 0 100px;
+  padding: 100px 0 100px;
   text-align: center;
   position: absolute;
   top: 0;
@@ -250,4 +250,59 @@ header {
 
 .calendar-click-color {
   background-color: red;
+}
+
+.input-div{
+  font-size: 5px;
+  padding: 10px;
+  margin: 20px auto 0;
+  width: 200px;
+}
+
+#form-input {
+  color: black;
+	background-color: #d9f6ff;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight:500;
+  font-size: 18px;
+  border-radius: 5px;
+  line-height: 22px;
+  background-color: transparent;
+  border:2px solid #ffffff;
+  transition: all 0.3s;
+  padding: 13px;
+  margin-bottom: 15px;
+  width:100%;
+  box-sizing: border-box;
+  outline:0;
+}
+
+.form-input:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px rgb(33, 150, 243) inset;
+}
+
+
+.btn.type02{
+  width: 100%;
+  max-width: 340px;
+  padding: 15px 10px;
+  display: inline-block;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #fff;
+  background-color: #ed576c;
+  border-bottom: 4px solid #c5394d;
+  border-radius: 5px;
+}
+
+
+.user-list-div{
+  width: 90%;
+  margin: 50px auto;
+  text-align: left;
+}
+
+.hosoku p{
+  font-size: 5px;
 }
