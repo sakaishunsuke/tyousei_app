@@ -1,5 +1,7 @@
 class HomeController < ApplicationController
   def top
+    # セッションを確認する
+    @s_user_name = session[:username]
     # 全員のデータを取り出す
     @attendances = Attendance.all
     # 何日に誰がいるか記録するMAP変数
@@ -13,6 +15,7 @@ class HomeController < ApplicationController
       @user_list.push(at.username)
       # クッキーに投稿者の日付を記録する
       cookies[at.username] = at.date
+      cookies[at.username+'_bikou'] = at.bikou
       # 参加できる日を読みこむ（配列）
       date_list = at.date.split(',')
       date_list.each do |date|
@@ -47,18 +50,39 @@ class HomeController < ApplicationController
   end
   
   def create
-    # 同じ名前があるか確認する
-    
+    # データが欠損していないか確認
+    if !params[:username].nil? && !params[:username].nil? 
+      
+      # 同じ名前があるか確認する
+      @attendances = Attendance.find_by(username: params[:username])
+      if !@attendances.nil?
+        @attendances.date = params[:date_maru]
+      else
+        @attendances = Attendance.new(username: params[:username], date: params[:date_maru])
+      end
+      
+      # 備考欄を挿入
+      @attendances.bikou = params[:bikou]
+      
+      # データ保存
+      @attendances.save
+      
+      # セッションに名前を保存
+      session[:username] = params[:username]
+      
+    end
+    # ホーム画面に戻す
+    redirect_to("/")
+  end
+  
+  def delete
+    # セッションに空にする
+    session.delete(:username)
+    # 投稿者をDBから探して、あれば消去
     @attendances = Attendance.find_by(username: params[:username])
     if !@attendances.nil?
-      @attendances.date = params[:date]
-    else
-      @attendances = Attendance.new(username: params[:username], date: params[:date])
+      @attendances.delete
     end
-    
-    # データ保存
-    @attendances.save
-    
     # ホーム画面に戻す
     redirect_to("/")
   end

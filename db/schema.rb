@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_045420) do
+ActiveRecord::Schema.define(version: 2021_06_05_193948) do
 
   create_table "attendances", force: :cascade do |t|
     t.text "username"
     t.text "date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "bikou"
+    t.string "date_sankaku"
   end
 
 end

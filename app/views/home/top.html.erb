@@ -2,7 +2,7 @@
 
 <header>
   <div class="header-logo">
-    日程調整サイト
+    簡単調整サイト
   </div>
   <ul class="header-menus">
     <li></li>
@@ -12,7 +12,7 @@
 <div class="main top-main">
   <div class="top-message">
     <!--<h2>カレンダーを使った簡単日程調整！</h2>-->
-    <p>参加できそうな日をクリック、名前を入力して保存してね</p>
+    <p>22時から参加できそうな日をクリック、名前を入力して保存してね！</p>
   </div>
   
   <div>
@@ -33,6 +33,8 @@
       <!--カレンダーの自動生成-->
       <!--カレンダーの最初に何日分空日を入れたいかpresetに入れる-->
       <% @date_preset = 2%>
+      <!--何人以上で太文字にするか-->
+      <% @border = 8%>
       <% @date_count = 1 - @date_preset %>
       <% while @date_count < 31 do %>
         <tr align="center" bgcolor="#FFFFFF">
@@ -42,10 +44,21 @@
             <% else %>
               <!--参加者がいれば人数と名前を表示-->
               <% if @date_map.key?(@date_count.to_s) %>
-                <td id="date-masu-<%= @date_count %>"><%= @date_count %> <br><%= @date_map[@date_count.to_s].length %>人</td>
+                <% @calendar_class_content = ""%>
+                <!--8人以上で太字にする-->
+                <% if @date_map[@date_count.to_s].length >= @border  %>
+                  <% @calendar_class_content += " calendar-font-bold" %>
+                <% end %>
+                <!--セッションの人の投稿日はいろをつける-->
+                <% if @date_map[@date_count.to_s].include?(@s_user_name) %>
+                  <% @calendar_class_content += " calendar-click-color calendar-image-maru" %>
+                  <td class="<%= @calendar_class_content %>" id="date-masu-<%= @date_count %>"><%= @date_count %> 日<br>〇：<%= @date_map[@date_count.to_s].length %>人<br>△：0人</td>
+                <% else %>
+                  <td class="<%= @calendar_class_content %>" id="date-masu-<%= @date_count %>"><%= @date_count %> 日<br>〇：<%= @date_map[@date_count.to_s].length %>人<br>△：0人</td>
+                <% end %>
               <% else %>
                 <!--日付だけ入れる-->
-                <td id="date-masu-<%= @date_count %>"><%= @date_count %></td>
+                <td id="date-masu-<%= @date_count %>"><%= @date_count %> 日<br>　<br>　</td>
               <% end %>
             <% end %>
             <% @date_count += 1 %>
@@ -60,13 +73,30 @@
     <div class="input-div" >
       <p>名前</p>
       <%= form_tag("home/create") do %>
-        <!--名前の入力フィーム-->
-        <input class="form-input" id="form-input" type="text" name="username" size="15" maxlength="20" required>
+        <!--名前の入力フィーム セッションの名前を表示-->
+        <% if @s_user_name.nil? %>
+          <input class="form-input" id="form-input" type="text" name="username" size="15" maxlength="15" required>
+        <% else %>
+          <input class="form-input" id="form-input" type="text" name="username" size="15" maxlength="15" value=<%= @s_user_name %> required>
+        <% end %>
+        
+        <p></p>
+        <p>備考欄</p>
+        <% if @s_user_name.nil? %>
+          <input class="form-input bikou" id="form-input-bikou" type="text" name="bikou" size="30" maxlength="100">
+        <% else %>
+          <input class="form-input bikou" id="form-input-bikou" type="text" name="bikou" size="30" maxlength="100" value=<%= cookies[@s_user_name+"_bikou"] %> >
+        <% end %>
         
         <!--登録データの一覧を確認するフォーム（非表示）-->
         <textarea hidden  cols=10 ><%= @date_map_name_s %></textarea>
         <!--日付を記録するフォーム（非表示）-->
-        <textarea hidden name="date" class="textarea_date"></textarea>
+        <!--セッションの人の日付を読み込む-->
+        <% if !@s_user_name.nil? %>
+          <textarea name="date_maru" class="textarea_date"><%= cookies[@s_user_name] %></textarea>
+        <% else %>
+          <textarea name="date_maru" class="textarea_date"></textarea>
+        <% end %>
         <!--登録ボタン-->
         <input class="btn type02" type='submit' value="保存">
       <% end %>
@@ -75,15 +105,27 @@
     <!--投稿者リスト（トグルボタンで選択可能）-->
     <div class="user-list-div">
       <p>参加者リスト！</p>
-      <p class="hosoku">名前をクリックすることで、その人の日程を表示できます</p>
+      <p class="hosoku">編集したい名前をクリックしてね！ </p>
+      <span class="m-form-radio-name">
+        <span class="m-form-radio-text">名前</span>
+        <span >　備考欄</span>
+      </span>
+      <hr>
       <!--投稿者が居たら、リストを作成する-->
       <% if @user_list.length > 0  %>
-        <% @user_list.each do |user|  %>
+        <% @user_list.each do |user| %>
           <div class="" >
             <label  class="user_list">
-              <input type="radio" name="radio" value="1" />
+              <!--セッションのユーザーにチェックをつける-->
+              <% if !@s_user_name.nil? && @s_user_name == user %>
+                <input type="radio" name="radio" value="1" checked/>
+              <% else %>
+                <input type="radio" name="radio" value="1" />
+              <% end %>
               <span class="m-form-radio-name">
-                  <span class="m-form-radio-text"><%= user %></span>
+                <span class="m-form-radio-text"><%= user %></span>
+                <!--備考内容があれば表示-->
+                <span ><%= @attendances.find_by(username: user).bikou %></span>
               </span>
             </label>
           </div>
@@ -92,6 +134,32 @@
     </div>
 
 
+  </div>
+  
+  
+  <p>投稿者一覧から選択して、消去を押すことで一覧から消せます</p>
+  <div class="user-deleate-div" >
+    <%= form_tag("home/user-delete") do %>
+      
+      <!--選択されている投稿者の名前を表示-->
+      <!--<span>選択されて投稿者</span>-->
+      <p>選択されて投稿者</p>
+      <% if @s_user_name.nil? %>
+        <input readonly class="form-input" type="text" name="username" size="15" maxlength="15" value="削除する投稿者を選んでください"  required>
+      <% else %>
+        <input readonly class="form-input" type="text" name="username" size="15" maxlength="15" value=<%= @s_user_name %> required>
+      <% end %>
+      
+      <p></p>
+      <!--削除ボタン-->
+      <% if @s_user_name.nil? %>
+        <input id="user-delete" class="btn type02 inactive" type='submit' value="消去" disabled>
+      <% else %>
+        <input id="user-delete" class="btn type02" type='submit' value="消去">
+      <% end %>
+      <p></p>
+      <span style="color: red">※押すと即実行されます</span>
+    <% end %>
   </div>
   
   

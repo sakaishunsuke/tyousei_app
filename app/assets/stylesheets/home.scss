@@ -241,25 +241,41 @@ header {
 }
 
 // ここからオリジナル！
+// カレンダー系
 .calendar {
   table-layout: fixed;
   margin: 0 auto 0;
   color: black;
   width: 90%;
 }
-
 .calendar-click-color {
-  background-color: red;
+  // background-color: red;
+}
+.calendar-image-maru {
+  background-image: image-url('maru.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.calendar-image-sankaku {
+  background-image: image-url('sankaku.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.calendar-font-bold{
+  font-weight: 900;
+  background-color: #FFF566;
 }
 
+// 入力フォーム部分
 .input-div{
   font-size: 5px;
   padding: 10px;
   margin: 20px auto 0;
-  width: 200px;
+  width: 90%;
 }
-
-#form-input {
+.form-input {
   color: black;
 	background-color: #d9f6ff;
   font-family: Helvetica, Arial, sans-serif;
@@ -272,19 +288,19 @@ header {
   transition: all 0.3s;
   padding: 13px;
   margin-bottom: 15px;
-  width:100%;
+  width: 40%;
   box-sizing: border-box;
   outline:0;
 }
-
+.bikou{
+  width: 100%;
+}
 .form-input:focus {
   outline: 0;
   box-shadow: 0 0 0 2px rgb(33, 150, 243) inset;
 }
-
-
 .btn.type02{
-  width: 100%;
+  width: 40%;
   max-width: 340px;
   padding: 15px 10px;
   display: inline-block;
@@ -296,13 +312,32 @@ header {
   border-radius: 5px;
 }
 
-
+// 投稿者一覧の部分
 .user-list-div{
   width: 90%;
   margin: 50px auto;
   text-align: left;
 }
-
+.m-form-radio-name{
+  font-size: 20px;
+}
+.m-form-radio-text{
+  display: inline-block;
+  width: 10em;
+}
 .hosoku p{
   font-size: 5px;
+}
+
+// 投稿者消去部分
+.user-deleate-div{
+  padding: 10px;
+  margin: 20px auto 0;
+  width: 90%;
+}
+
+.btn.type02.inactive{
+  background-color: #797979;
+  border-bottom: 0px solid #c5394d;
+  border-radius: 0px;
 }
