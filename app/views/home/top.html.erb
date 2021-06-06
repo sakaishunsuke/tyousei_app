@@ -1,5 +1,8 @@
 <%= javascript_pack_tag 'custom/html_click' %>
 
+<!--デバックよう変数 hiddenを消すと隠れていたテキストエリアが表示される-->
+<% @debug = "hidden"%>
+
 <header>
   <div class="header-logo">
     簡単調整サイト
@@ -43,19 +46,25 @@
               <td></td>
             <% else %>
               <!--参加者がいれば人数と名前を表示-->
-              <% if @date_map.key?(@date_count.to_s) %>
+              <% if @date_map_maru[@date_count.to_s].length > 0 || @date_map_sankaku[@date_count.to_s].length > 0 %>
                 <% @calendar_class_content = ""%>
+                
                 <!--8人以上で太字にする-->
-                <% if @date_map[@date_count.to_s].length >= @border  %>
+                <% if @date_map_maru[@date_count.to_s].length >= @border  %>
                   <% @calendar_class_content += " calendar-font-bold" %>
                 <% end %>
+                
                 <!--セッションの人の投稿日はいろをつける-->
-                <% if @date_map[@date_count.to_s].include?(@s_user_name) %>
-                  <% @calendar_class_content += " calendar-click-color calendar-image-maru" %>
-                  <td class="<%= @calendar_class_content %>" id="date-masu-<%= @date_count %>"><%= @date_count %> 日<br>〇：<%= @date_map[@date_count.to_s].length %>人<br>△：0人</td>
-                <% else %>
-                  <td class="<%= @calendar_class_content %>" id="date-masu-<%= @date_count %>"><%= @date_count %> 日<br>〇：<%= @date_map[@date_count.to_s].length %>人<br>△：0人</td>
+                <% if    @date_map_maru[@date_count.to_s].include?(@s_user_name) %>
+                  <% @calendar_class_content += " calendar-image-maru" %>
+                <% elsif @date_map_sankaku[@date_count.to_s].include?(@s_user_name) %>
+                  <% @calendar_class_content += " calendar-image-sankaku" %>
                 <% end %>
+                <td class="<%= @calendar_class_content %>" id="date-masu-<%= @date_count %>"><%= @date_count %> 日
+                <br>〇：<%= @date_map_maru[@date_count.to_s].length %>人
+                <br>▲：<%= @date_map_sankaku[@date_count.to_s].length %>人</td>
+                
+                
               <% else %>
                 <!--日付だけ入れる-->
                 <td id="date-masu-<%= @date_count %>"><%= @date_count %> 日<br>　<br>　</td>
@@ -85,19 +94,20 @@
         <% if @s_user_name.nil? %>
           <input class="form-input bikou" id="form-input-bikou" type="text" name="bikou" size="30" maxlength="100">
         <% else %>
-          <input class="form-input bikou" id="form-input-bikou" type="text" name="bikou" size="30" maxlength="100" value=<%= cookies[@s_user_name+"_bikou"] %> >
+          <input class="form-input bikou" id="form-input-bikou" type="text" name="bikou" size="30" maxlength="100" value=<%= @js_datas[@s_user_name+"_bikou"] %> >
         <% end %>
         
-        <!--デバックよう変数 hiddenを消すと隠れていたテキストエリアが表示される-->
-        <% @debug = "hidden"%>
         <!--登録データの一覧を確認するフォーム（非表示）-->
-        <textarea <%= @debug %> cols=10  required><%= @date_map %></textarea>
+        <textarea <%= @debug %> cols=10  readonly><%= @date_map_maru %></textarea>
+        <textarea <%= @debug %> cols=10  readonly><%= @date_map_sankaku %></textarea>
         <!--日付を記録するフォーム（非表示）-->
         <!--セッションの人の日付を読み込む-->
         <% if !@s_user_name.nil? %>
-          <textarea <%= @debug %> name="date_maru" class="textarea_date" required><%= cookies[@s_user_name] %></textarea>
+          <textarea <%= @debug %> name="date_maru"    class="textarea_date" readonly><%= @js_datas[@s_user_name+"_maru"] %></textarea>
+          <textarea <%= @debug %> name="date_sankaku" class="textarea_date" readonly><%= @js_datas[@s_user_name+"_sankaku"] %></textarea>
         <% else %>
-          <textarea <%= @debug %> name="date_maru" class="textarea_date" required></textarea>
+          <textarea <%= @debug %> name="date_maru" class="textarea_date" readonly></textarea>
+          <textarea <%= @debug %> name="date_sankaku" class="textarea_date" readonly></textarea>
         <% end %>
         <!--登録ボタン-->
         <input class="btn type02" type='submit' value="保存">
@@ -127,9 +137,14 @@
               <span class="m-form-radio-name">
                 <span class="m-form-radio-text"><%= user %></span>
                 <!--備考内容があれば表示-->
-                <span ><%= @attendances.find_by(username: user).bikou %></span>
+                <span class="m-form-radio-text-bikou"> <%= @attendances.find_by(username: user).bikou %></span>
               </span>
             </label>
+            <!--JSへ渡すデータをここに保存する-->
+            <textarea <%= @debug %> id="<%= user%>_maru"    class="textarea_date" readonly><%= @js_datas[user+"_maru"] %></textarea>
+            <textarea <%= @debug %> id="<%= user%>_sankaku" class="textarea_date" readonly><%= @js_datas[user+"_sankaku"] %></textarea>
+            <textarea <%= @debug %> id="<%= user%>_bikou"   class="textarea_date" readonly><%= @js_datas[user+"_bikou"] %></textarea>
+            <hr style="border:2px dotted #ffffff;">
           </div>
         <% end %>
       <% end %>

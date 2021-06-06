@@ -247,9 +247,7 @@ header {
   margin: 0 auto 0;
   color: black;
   width: 90%;
-}
-.calendar-click-color {
-  // background-color: red;
+  user-select: none;
 }
 .calendar-image-maru {
   background-image: image-url('maru.png');
@@ -323,7 +321,11 @@ header {
 }
 .m-form-radio-text{
   display: inline-block;
-  width: 10em;
+  width: 15em;
+}
+.m-form-radio-text-bikou{
+  display: inline-block;
+  width: calc(100% - 17em);
 }
 .hosoku p{
   font-size: 5px;

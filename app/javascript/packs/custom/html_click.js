@@ -7,24 +7,33 @@ $(function(){
       //文字を数値に変換
       var number = text; 
       
-      //クリックした時に色を変更
-      $(this).each(function(){
-        $(this).toggleClass('calendar-click-color');
-        $(this).toggleClass('calendar-image-maru');
-      });
-      
       // 記録されているテキストを読みこむ
-      var date_text = $('textarea[name=date_maru]').text();
+      var date_text_maru = $('textarea[name=date_maru]').text();
+      var date_text_sankaku = $('textarea[name=date_sankaku]').text();
+      
       // 一旦Setに変換する
-      var date_set = new Set(date_text.split(','));
-      // そんざいすれば消す、なければ追加
-      if( date_set.has(number) ){
-        date_set.delete(number);
+      var date_set_maru    = new Set(date_text_maru.split(','));
+      var date_set_sankaku = new Set(date_text_sankaku.split(','));
+      
+      if ( $(this).hasClass('calendar-image-maru') ){
+        //〇なら▲にする
+        $(this).removeClass('calendar-image-maru');
+        date_set_maru.delete(number);
+        $(this).toggleClass('calendar-image-sankaku');
+        date_set_sankaku.add(number);
+        
+      }else if($(this).hasClass('calendar-image-sankaku') ){
+        // ▲なら消す
+        $(this).removeClass('calendar-image-sankaku');
+        date_set_sankaku.delete(number);
       }else{
-        date_set.add(number);
+        //〇▲でもないなら〇をつける
+        $(this).toggleClass('calendar-image-maru');
+        date_set_maru.add(number);
       }
       // Setからarrayから文字列に変換して保存
-      $('textarea[name=date_maru]').text( [...date_set] );
+      $('textarea[name=date_maru]').text( [...date_set_maru] );
+      $('textarea[name=date_sankaku]').text( [...date_set_sankaku] );
       
     }
     
@@ -36,31 +45,39 @@ $(function(){
     
     // 名前と備考欄をその人に変更
     $('input[name=username]').val( username );
-    $('input[name=bikou]').val( Cookies.get( username+"_bikou" ) );
+    $('input[name=bikou]').val( $('#'+username+'_bikou').text() );
     
     // 消去ボタンの名前変更＆ボタンの活性化
     $('#user-delete').removeClass( 'inactive' );
     $('#user-delete').prop('disabled', false);
     
-    var items = Cookies.get( username );
-    var dates = items.split(',');
-    
+    // カレンダーのをいったんリセットさせる
     for(let count = 1; count < 32; count++) {
       // 1 ~ 31 日　をリセット
-      $('#date-masu-'+count).removeClass( 'calendar-click-color' );
       $('#date-masu-'+count).removeClass( 'calendar-image-maru' );
+      $('#date-masu-'+count).removeClass( 'calendar-image-sankaku' );
     }
-    // undefinedでなければデータがproduct_nameに入っている。
-    if (items != undefined) {
-      dates.forEach(function(date, index) {
-        $('#date-masu-'+date).toggleClass( 'calendar-click-color' );
+    
+    // 〇の日の処理
+    var date_text_maru = $('#'+username+'_maru').text();
+    var date_maru = date_text_maru.split(',');// 1日以上でもあれば反映させる
+    if (date_maru.length > 0) {
+      date_maru.forEach(function(date, index) {
         $('#date-masu-'+date).toggleClass( 'calendar-image-maru' );
-        // console.log(index + ': ' + date);
       });
-      $('textarea[name=date_maru]').text( items );
-    }else{ 
-      // $('textarea[name=date]').text( "no" );
     }
+    $('textarea[name=date_maru]').text( date_text_maru );
+    
+    
+    // 〇の日の処理
+    var date_text_sankaku = $('#'+username+'_sankaku').text();
+    var date_sankaku = date_text_sankaku.split(',');// 1日以上でもあれば反映させる
+    if (date_sankaku.length > 0) {
+      date_sankaku.forEach(function(date, index) {
+        $('#date-masu-'+date).toggleClass( 'calendar-image-sankaku' );
+      });
+    }
+    $('textarea[name=date_sankaku]').text( date_text_sankaku );
   });
   
 });
