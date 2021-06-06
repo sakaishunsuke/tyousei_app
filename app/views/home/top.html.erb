@@ -88,14 +88,16 @@
           <input class="form-input bikou" id="form-input-bikou" type="text" name="bikou" size="30" maxlength="100" value=<%= cookies[@s_user_name+"_bikou"] %> >
         <% end %>
         
+        <!--デバックよう変数 hiddenを消すと隠れていたテキストエリアが表示される-->
+        <% @debug = "hidden"%>
         <!--登録データの一覧を確認するフォーム（非表示）-->
-        <textarea hidden  cols=10 ><%= @date_map_name_s %></textarea>
+        <textarea <%= @debug %> cols=10  required><%= @date_map %></textarea>
         <!--日付を記録するフォーム（非表示）-->
         <!--セッションの人の日付を読み込む-->
         <% if !@s_user_name.nil? %>
-          <textarea name="date_maru" class="textarea_date"><%= cookies[@s_user_name] %></textarea>
+          <textarea <%= @debug %> name="date_maru" class="textarea_date" required><%= cookies[@s_user_name] %></textarea>
         <% else %>
-          <textarea name="date_maru" class="textarea_date"></textarea>
+          <textarea <%= @debug %> name="date_maru" class="textarea_date" required></textarea>
         <% end %>
         <!--登録ボタン-->
         <input class="btn type02" type='submit' value="保存">
