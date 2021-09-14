@@ -1,5 +1,12 @@
 class HomeController < ApplicationController
   def top
+    if params[:event_id] != nil then
+      @event = EventList.find_by(event_id: params[:event_id])
+      @event_id = 'イベント名：'+ @event.name
+    else
+      @event_id = 'イベント名：ななし'
+    end
+      
     # セッションを確認する
     @s_user_name = session[:username]
     # 全員のデータを取り出す
