@@ -1,0 +1,45 @@
+<%= javascript_pack_tag 'custom/html_click' %>
+
+<!--デバックよう変数 hiddenを消すと隠れていたテキストエリアが表示される-->
+<% @debug = "hidden"%>
+
+<header>
+  <div class="header-logo">
+    簡単調整サイト
+  </div>
+  <ul class="header-menus">
+    <li></li>
+  </ul>
+</header>
+
+<div class="main top-main">
+  <div class="top-message">
+    <p>作成するイベントの名前を入力してね！</p>
+  </div>
+  
+  <div>
+    
+    
+    <div class="input-div" >
+      <%= form_tag("event/create") do %>
+        <!--イベント名前の入力フィーム-->
+        <p>イベント名</p>
+        <input class="form-input" id="form-input-eventname" type="text" name="eventname" size="30" maxlength="30" required>
+        <p>イベントの説明</p>
+        <input class="form-input" id="form-input-eventname" type="text" name="bikou" size="30" maxlength="60">
+        <p>パスワード(最低6文字)</p>
+        <input type="password" minlength="6" class="form-input" id="form-input-eventname" name="password" size="30" maxlength="30" required>
+        <p></p>
+        <input class="btn type02" type='submit' value="イベントを作成">
+      <% end %>
+    </div>
+    
+
+
+  </div>
+  
+  
+  
+  
+</div>
+

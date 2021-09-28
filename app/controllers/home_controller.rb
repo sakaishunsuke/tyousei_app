@@ -1,18 +1,64 @@
 class HomeController < ApplicationController
+  protect_from_forgery
   def top
     if EventList.find_by(event_id: params[:event_id]) != nil then
       @event_id = params[:event_id]
       @event = EventList.find_by(event_id: @event_id)
-      @event_name = 'イベント名：'+ @event.name
     else
-      @event_name = 'イベント名：ななし'
+      # 該当するイベントがないので、イベント作成画面に飛ばす
+      redirect_to("/event-create")
     end
       
+    # 今日の日付を取得
+    @dt = Date.today
+    # 検索の年があるか？
+    if params[:year].nil?
+      @year = @dt.year.to_s
+    else
+      @year = params[:year].to_s
+      # 数値かどうかと適正範囲かの確認　不適切ならリダイレクト
+      if !(@year =~ /^[0-9]+$/ && 2021 <= @year.to_i && @year.to_i <= 3000)
+        # 開いていたイベント画面に戻す
+        redirect_to("/?event_id=#{ @event_id }")
+        return
+      end
+        
+    end
+    # 検索の月があるか？
+    if params[:month].nil?
+      @month = @dt.month.to_s
+    else
+      @month = params[:month].to_s
+      # 数値かどうかと適正範囲かの確認　不適切ならリダイレクト
+      if !(@month =~ /^[0-9]+$/ && 1 <= @month.to_i && @month.to_i <= 12)
+        # 開いていたイベント画面に戻す
+        redirect_to("/?event_id=#{ @event_id }")
+        return
+      end
+    end
+    
+    # 前月と翌月を求める
+    @dt = Date.new(@year.to_i, @month.to_i, 1) - 1.month
+    @year_zen = @dt.year
+    @month_zen = @dt.month
+    @dt = Date.new(@year.to_i, @month.to_i, 1) + 1.month
+    @year_yoku = @dt.year
+    @month_yoku = @dt.month
+    
+    # ここからカレンダーの変数設定処理
+    @dt = Date.new(@year.to_i, @month.to_i, 1)
+    # 最初に何日分開けるのかを決める変数
+    @date_preset = @dt.wday
+    
+    @dt = Date.new(@year.to_i, @month.to_i, -1)
+    # 月末の日付
+    @date_end = @dt.day
+    
     # セッションを確認する
     @s_user_name = session[:username]
     # 全員のデータを取り出す
-    # @attendances = Attendance.all
-    @attendances = Attendance.where(event_id: @event_id)
+    # 検索時には、イベントのidと年月を指定する
+    @attendances = Attendance.where(event_id: @event_id, ym: @year.to_s+@month.to_s)
     
     if @attendances != nil then
     
@@ -96,16 +142,20 @@ class HomeController < ApplicationController
     if !params[:username].nil?
       
       # 同じ名前があるか確認する
-      @attendances = Attendance.find_by(username: params[:username])
+      @attendances = Attendance.find_by(username: params[:username], event_id: params[:event_id], ym: params[:ym])
       if @attendances.nil?
-        @attendances = Attendance.new(username: params[:username])
+        @attendances = Attendance.new(username: params[:username], event_id: params[:event_id], ym: params[:ym])
       end
       
-      # 日付でーたを挿入
+      # 日付でーたを記述
       @attendances.date = params[:date_maru]
       @attendances.date_sankaku = params[:date_sankaku]
-      # 備考欄を挿入
+      # 備考欄を記述
       @attendances.bikou = params[:bikou]
+      # イベントidを記述
+      @attendances.event_id = params[:event_id]
+      # ymを記述
+      @attendances.ym = params[:ym]
       
       # データ保存
       @attendances.save
@@ -114,19 +164,19 @@ class HomeController < ApplicationController
       session[:username] = params[:username]
       
     end
-    # ホーム画面に戻す
-    redirect_to("/")
+    # 開いていたイベント画面に戻す
+    redirect_to("/?event_id=#{ params[:event_id] }&year=#{params[:year]}&month=#{params[:month]}")
   end
   
   def delete
     # セッションに空にする
     session.delete(:username)
     # 投稿者をDBから探して、あれば消去
-    @attendances = Attendance.find_by(username: params[:username])
+    @attendances = Attendance.find_by(username: params[:username], event_id: params[:event_id], ym: params[:ym])
     if !@attendances.nil?
       @attendances.delete
     end
-    # ホーム画面に戻す
-    redirect_to("/")
+    # 開いていたイベント画面に戻す
+    redirect_to("/?event_id=#{ params[:event_id] }&year=#{params[:year]}&month=#{params[:month]}")
   end
 end

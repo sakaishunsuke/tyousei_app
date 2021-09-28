@@ -66,6 +66,8 @@ header {
   position: absolute;
   z-index: 1;
   width: 100%;
+  background-color: #3ecdc6;
+  padding: 0 5% 0 5%;
 }
 
 .header-logo {
@@ -122,8 +124,8 @@ header {
   width: 100%;
   height: auto;
   min-height: 100%;
-  color: white;
-  background-color: #3ecdc6;
+  color: black;
+  // background-color: #3ecdc6;
   background-repeat: no-repeat;
   background-position: center 50%;
   background-size: cover;
@@ -282,7 +284,7 @@ header {
   border-radius: 5px;
   line-height: 22px;
   background-color: transparent;
-  border:2px solid #ffffff;
+  border:2px solid #b1b1b1;
   transition: all 0.3s;
   padding: 13px;
   margin-bottom: 15px;
@@ -295,7 +297,7 @@ header {
 }
 .form-input:focus {
   outline: 0;
-  box-shadow: 0 0 0 2px rgb(33, 150, 243) inset;
+  box-shadow: 0 0 0 2px #3ecdc6 inset;
 }
 .btn.type02{
   width: 40%;
@@ -331,8 +333,9 @@ header {
   font-size: 5px;
 }
 
+
 // 投稿者消去部分
-.user-deleate-div{
+.user-deleate-div,.event-div{
   padding: 10px;
   margin: 20px auto 0;
   width: 90%;

@@ -5,24 +5,28 @@
 
 <header>
   <div class="header-logo">
-    簡単調整サイト
+    <a href="/event-create">簡単調整サイト</a>
   </div>
   <ul class="header-menus">
-    <li></li>
+    <li><a href="/event-create">イベント新規作成</a></li>
   </ul>
 </header>
 
 <div class="main top-main">
   <div class="top-message">
     <!--<h2>カレンダーを使った簡単日程調整！</h2>-->
-    <p><%= @event_name  %></p>
-    <p>22時から参加できそうな日をクリック、名前を入力して保存してね！</p>
+    <p>イベント名：<%= @event.name  %> <a href="#top">編集</a> </p>
+    <p>説明：<%= @event.bikou %></p>
   </div>
   
   <div>
     <table class="calendar" border="0" cellpadding="2" cellspacing="1" bgcolor="#333333" width="" >
       <tr align="center" bgcolor="#FFFFFF">
-      <td colspan="7">2021年6月</td>
+      <td colspan="7">
+        <a href="/?event_id=<%= @event_id%>&year=<%= @year_zen%>&month=<%= @month_zen%>"> <前月 </a> 
+        <%=@year%>年<%=@month%>
+        <a href="/?event_id=<%= @event_id%>&year=<%= @year_yoku%>&month=<%= @month_yoku%>"> 翌月> </a>
+        </td>
       </tr>
       <tr align="center" bgcolor="#CCCCCC">
         <td bgcolor="#FF6666">日</td>
@@ -35,12 +39,10 @@
       </tr>
       
       <!--カレンダーの自動生成-->
-      <!--カレンダーの最初に何日分空日を入れたいかpresetに入れる-->
-      <% @date_preset = 2%>
       <!--何人以上で太文字にするか-->
       <% @border = 8%>
       <% @date_count = 1 - @date_preset %>
-      <% while @date_count < 31 do %>
+      <% while @date_count <= @date_end do %>
         <tr align="center" bgcolor="#FFFFFF">
           <% 7.times do %>
             <% if @date_count < 1  || @date_count >= 31%>
@@ -83,6 +85,13 @@
     <div class="input-div" >
       <p>名前</p>
       <%= form_tag("home/create") do %>
+        <!--イベントidを隠しinputで記述-->
+        <input hidden class="form-input" id="form-input" type="text" name="event_id" size="15" maxlength="15"  value=<%= @event_id %> required>
+        <!--year monthを隠しinputで記述-->
+        <input hidden type="text" name="ym" size="15" maxlength="15"  value=<%= @year+@month %> required>
+        <input hidden type="text" name="year" size="15" maxlength="15"  value=<%= @year %> required>
+        <input hidden type="text" name="month" size="15" maxlength="15"  value=<%= @month %> required>
+        
         <!--名前の入力フィーム セッションの名前を表示-->
         <% if @s_user_name.nil? %>
           <input class="form-input" id="form-input" type="text" name="username" size="15" maxlength="15" required>
@@ -145,7 +154,7 @@
             <textarea <%= @debug %> id="<%= user%>_maru"    class="textarea_date" readonly><%= @js_datas[user+"_maru"] %></textarea>
             <textarea <%= @debug %> id="<%= user%>_sankaku" class="textarea_date" readonly><%= @js_datas[user+"_sankaku"] %></textarea>
             <textarea <%= @debug %> id="<%= user%>_bikou"   class="textarea_date" readonly><%= @js_datas[user+"_bikou"] %></textarea>
-            <hr style="border:2px dotted #ffffff;">
+            <hr style="border:2px dotted #b1b1b1;">
           </div>
         <% end %>
       <% end %>
@@ -158,6 +167,12 @@
   <p>投稿者一覧から選択して、消去を押すことで一覧から消せます</p>
   <div class="user-deleate-div" >
     <%= form_tag("home/user-delete") do %>
+      <!--イベントidを隠しinputで記述-->
+      <input hidden class="form-input" id="form-input" type="text" name="event_id" size="15" maxlength="15"  value=<%= @event_id %> required>
+      <!--year monthを隠しinputで記述-->
+      <input hidden type="text" name="ym" size="15" maxlength="15"  value=<%= @year+@month %> required>
+      <input hidden type="text" name="year" size="15" maxlength="15"  value=<%= @year %> required>
+      <input hidden type="text" name="month" size="15" maxlength="15"  value=<%= @month %> required>
       
       <!--選択されている投稿者の名前を表示-->
       <!--<span>選択されて投稿者</span>-->
@@ -179,7 +194,6 @@
       <span style="color: red">※押すと即実行されます</span>
     <% end %>
   </div>
-  
   
 </div>
 
